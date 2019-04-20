@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.http import HttpResponse
@@ -12,6 +12,8 @@ import threading
 import json
 
 classifier = Classifier(settings.MEDIA_ROOT)
+image_type_supported = ['png', 'jpg', 'jpeg']
+video_type_supported = ['mp4']
 
 
 # Create your views here.
@@ -23,13 +25,26 @@ def home(request):
         unique_id = str(uuid4())
         print('settings.MEDIA_ROOT:{}'.format(settings.MEDIA_ROOT))
 
-        download_thread = threading.Thread(
-            target=classifier.classify_video,
-            args=('{}/{}'.format(settings.MEDIA_ROOT, uploaded_file.name), unique_id))
-        download_thread.start()
+        classifier_thread = None
+        ext = uploaded_file.name.split('.')[-1]
+        if ext in image_type_supported:
+            nd_image = classifier.open_image_file_from_disk('{}/{}'.format(settings.MEDIA_ROOT, uploaded_file.name))
+            classifier_thread = threading.Thread(
+                target=classifier.classify_image,
+                args=(nd_image, unique_id))
+        elif ext in video_type_supported:
+            classifier_thread = threading.Thread(
+                target=classifier.classify_video,
+                args=('{}/{}'.format(settings.MEDIA_ROOT, uploaded_file.name), unique_id))
 
-        context = {'unique_id': unique_id, }
-        return render(request, 'results.html', context)
+        if classifier_thread is not None:
+            classifier_thread.start()
+            context = {'unique_id': unique_id, }
+            return render(request, 'results.html', context)
+        else:
+            # TODO: Render message to user indication that `file is not supported`.
+            pass
+
     return render(request, 'index.html', {})
 
 

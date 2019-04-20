@@ -35,6 +35,12 @@ class Classifier(object):
             label.append(l.rstrip())
         return label
 
+    @staticmethod
+    def open_image_file_from_disk(image_path):
+        img = cv2.imread(image_path)
+        frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return frame
+
     def classify_video(self, video_path, unique_id=None):
         vid = cv2.VideoCapture(video_path)
         while True:
@@ -86,7 +92,7 @@ class Classifier(object):
     def write_to_disk(self, image, x, y, width, height, obj_class, unique_id=None):
         cropped_img = image[y: height, x: width]
         file_save_path = '{}/{}/{}.jpg'.format(self.media_root, obj_class, uuid4())
-        cv2.imwrite(file_save_path, cropped_img)
+        cv2.imwrite(file_save_path, cv2.cvtColor(cropped_img, cv2.COLOR_RGB2BGR))
         file_name = file_save_path.split(self.media_root)[1]
         if unique_id is not None:
             if unique_id in self.images_saved_to_disk:
