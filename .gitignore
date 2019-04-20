@@ -1,0 +1,6 @@
+.DS_Store
+bin
+lib
+.Python
+include
+pip-selfcheck.json

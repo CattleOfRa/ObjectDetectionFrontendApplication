@@ -1,0 +1,21 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fafafa">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+<body>
+    <h2>Upload</h2>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <input type="file" name="document">
+        <button type="submit">Upload file</button>
+    </form>
+</body>
+
+</html>
