@@ -1,7 +1,6 @@
 from uuid import uuid4
 import cv2
 import tensorflow as tf
-# from core import utils
 
 
 class Classifier(object):

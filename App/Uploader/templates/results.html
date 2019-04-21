@@ -1,87 +1,45 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#fafafa">
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-</head>
+    <head>
+        {% load static %}
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Latest Jquery -->
+        <script src="{% static 'jquery-3.4.0.min.js' %}"></script>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <script type="text/javascript">
+            var unique_id = "{{ unique_id }}";
+        </script>
+        <script src="{% static 'main.js' %}"></script>
+        <title>Results</title>
+    </head>
 
-<body>
-    {% csrf_token %}
-    <div id="unique_id" style="visibility: hidden;">{{ unique_id }}</div>
-    <div id="laptops_label">Laptops</div>
-    <div id="laptops_images"></div>
-    <div id="keyboards_label">Keyboards</div>
-    <div id="keyboards_images"></div>
-    <div id="faces_label">Faces</div>
-    <div id="faces_images"></div>
-</body>
+    <body>
+        {% csrf_token %}
 
-<script>
-    $(document).ready(function() {
+        <div class="main-content" id="main-content">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-laptop-tab" data-toggle="tab" href="#nav-laptop" role="tab" aria-controls="nav-laptop" aria-selected="true">Laptop</a>
+                    <a class="nav-item nav-link" id="nav-keyboard-tab" data-toggle="tab" href="#nav-keyboard" role="tab" aria-controls="nav-keyboard" aria-selected="false">Keyboard</a>
+                    <a class="nav-item nav-link" id="nav-face-tab" data-toggle="tab" href="#nav-face" role="tab" aria-controls="nav-face" aria-selected="false">Face</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-laptop" role="tabpanel" aria-labelledby="nav-laptop-tab"><div id="laptop_results"></div></div>
+                <div class="tab-pane fade" id="nav-keyboard" role="tabpanel" aria-labelledby="nav-keyboard-tab"><div id="keyboard_results"></div></div>
+                <div class="tab-pane fade" id="nav-face" role="tabpanel" aria-labelledby="nav-face-tab"><div id="face_results"></div></div>
+            </div>
+        </div>
 
-        var total_number_of_laptops = 0;
-        var total_number_of_keyboards = 0;
-        var total_number_of_faces = 0;
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="{% static 'popper.min.js' %}"></script>
+        <script src="{% static 'bootstrap.min.js' %}"></script>
 
-        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                // if not safe, set csrftoken
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            },
-            cache: false
-        });
-
-        function csrfSafeMethod(method) {
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
-
-        $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            // if not safe, set csrftoken
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-
-        var my_refresh = setInterval(function() {
-            $.ajax({
-                type: "POST",
-                url:"/get_images/",
-                data: {
-                    'unique_id': $('#unique_id').text()
-                },
-                success: function(data){
-                    $.each( data['laptop'], function( i, item ) {
-                        total_number_of_laptops += 1;
-                        $( "<img style=\"max-height: 50px;\">" ).attr( "src", "http://127.0.0.1:8000/media" + item ).appendTo("#laptops_images");
-                        $('#laptops_label').text("Laptops (" + total_number_of_laptops + ")")
-                    });
-
-                    $.each( data['keyboard'], function( i, item ) {
-                        total_number_of_keyboards += 1;
-                        $( "<img style=\"max-height: 50px;\">" ).attr( "src", "http://127.0.0.1:8000/media" + item ).appendTo("#keyboards_images");
-                        $('#keyboards_label').text("Keyboards (" + total_number_of_keyboards + ")")
-                    });
-
-                    $.each( data['face'], function( i, item ) {
-                        total_number_of_faces += 1;
-                        $( "<img style=\"max-height: 50px;\">" ).attr( "src", "http://127.0.0.1:8000/media" + item ).appendTo("#faces_images");
-                        $('#faces_label').text("Faces (" + total_number_of_faces + ")")
-                    });
-                }
-            });
-            }, 2000);
-    });
-</script>
+    </body>
 
 </html>
